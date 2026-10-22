@@ -1,0 +1,14 @@
+cgate — third-party notices
+
+PyMuPDF (runtime dependency, PDF ingestion) is licensed under AGPL-3.0
+(https://github.com/pymupdf/PyMuPDF). cgate's own source is MIT; it imports
+PyMuPDF but does not bundle it. Distributing a combined application that
+includes PyMuPDF falls under the AGPL's terms.
+
+Word add-in fonts (addin/assets/fonts) are distributed under the SIL Open Font
+License 1.1: IBM Plex Mono, Libre Franklin, Source Serif 4. Their licence texts
+are added alongside the font files.
+
+Other runtime dependencies (python-docx, PyYAML, numpy, Pillow, FastAPI,
+uvicorn, python-multipart, cryptography) are used under their own permissive
+licences.

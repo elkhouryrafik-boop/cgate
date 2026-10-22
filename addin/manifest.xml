@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Pre-Submission Compliance Review — Word add-in manifest.
+
+  Every URL here points at https://localhost:8765, which is the review host
+  started by `cgate serve` on this machine. That is deliberate and is the whole
+  security posture of this add-in: there is no remote endpoint, so a solicitation
+  opened in Word is read by a process on the same machine and transmitted
+  nowhere. AppDomains is omitted for the same reason: the pane never navigates
+  off its own origin.
+
+  If the port is changed on the `cgate serve` command line, change it here too
+  and re-sideload. Office reads these URLs at load time and does not discover them.
+-->
+<OfficeApp
+  xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+  xmlns:ov="http://schemas.microsoft.com/office/taskpaneappversionoverrides"
+  xsi:type="TaskPaneApp">
+
+  <Id>7D3C1E5A-2B4F-4C86-9A10-5E6F8B2D9C37</Id>
+  <Version>0.1.0.0</Version>
+  <ProviderName>cgate (demo)</ProviderName>
+  <DefaultLocale>en-GB</DefaultLocale>
+  <DisplayName DefaultValue="cgate review" />
+  <Description DefaultValue="Reads the open solicitation against a pre-submission checklist (SOP-3.11) and marks up what it finds. Gathers evidence; a named human decides." />
+  <IconUrl DefaultValue="https://localhost:8765/assets/icon-64.png" />
+  <HighResolutionIconUrl DefaultValue="https://localhost:8765/assets/icon-128.png" />
+  <SupportUrl DefaultValue="https://localhost:8765/" />
+
+  <Hosts>
+    <Host Name="Document" />
+  </Hosts>
+
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="WordApi" MinVersion="1.1" />
+    </Sets>
+  </Requirements>
+
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://localhost:8765/taskpane.html" />
+  </DefaultSettings>
+
+  <Permissions>ReadWriteDocument</Permissions>
+
+  <VersionOverrides xmlns="http://schemas.microsoft.com/office/taskpaneappversionoverrides" xsi:type="VersionOverridesV1_0">
+    <Hosts>
+      <Host xsi:type="Document">
+        <DesktopFormFactor>
+          <GetStarted>
+            <Title resid="GetStarted.Title" />
+            <Description resid="GetStarted.Description" />
+            <LearnMoreUrl resid="Host.Url" />
+          </GetStarted>
+
+          <ExtensionPoint xsi:type="PrimaryCommandSurface">
+            <OfficeTab id="TabHome">
+              <Group id="CgateGroup">
+                <Label resid="Group.Label" />
+                <Icon>
+                  <bt:Image size="16" resid="Icon.16" />
+                  <bt:Image size="32" resid="Icon.32" />
+                  <bt:Image size="80" resid="Icon.80" />
+                </Icon>
+                <Control xsi:type="Button" id="CgateOpenPane">
+                  <Label resid="Button.Label" />
+                  <Supertip>
+                    <Title resid="Button.Label" />
+                    <Description resid="Button.Tooltip" />
+                  </Supertip>
+                  <Icon>
+                    <bt:Image size="16" resid="Icon.16" />
+                    <bt:Image size="32" resid="Icon.32" />
+                    <bt:Image size="80" resid="Icon.80" />
+                  </Icon>
+                  <Action xsi:type="ShowTaskpane">
+                    <TaskpaneId>CgateTaskpane</TaskpaneId>
+                    <SourceLocation resid="Taskpane.Url" />
+                  </Action>
+                </Control>
+              </Group>
+            </OfficeTab>
+          </ExtensionPoint>
+        </DesktopFormFactor>
+      </Host>
+    </Hosts>
+
+    <Resources>
+      <bt:Images>
+        <bt:Image id="Icon.16" DefaultValue="https://localhost:8765/assets/icon-16.png" />
+        <bt:Image id="Icon.32" DefaultValue="https://localhost:8765/assets/icon-32.png" />
+        <bt:Image id="Icon.80" DefaultValue="https://localhost:8765/assets/icon-80.png" />
+      </bt:Images>
+      <bt:Urls>
+        <bt:Url id="Taskpane.Url" DefaultValue="https://localhost:8765/taskpane.html" />
+        <bt:Url id="Host.Url" DefaultValue="https://localhost:8765/" />
+      </bt:Urls>
+      <bt:ShortStrings>
+        <bt:String id="Group.Label" DefaultValue="Compliance" />
+        <bt:String id="Button.Label" DefaultValue="cgate review" />
+        <bt:String id="GetStarted.Title" DefaultValue="Pre-submission compliance review" />
+      </bt:ShortStrings>
+      <bt:LongStrings>
+        <bt:String id="Button.Tooltip" DefaultValue="Read this solicitation against the pre-submission checklist. Marks each integrity, eligibility and conflict provision in the margin with what it binds the firm to, and what the review could not establish." />
+        <bt:String id="GetStarted.Description" DefaultValue="Start the review host with 'cgate serve', then open the pane from the Compliance group on the Home tab." />
+      </bt:LongStrings>
+    </Resources>
+  </VersionOverrides>
+</OfficeApp>

@@ -1,0 +1,55 @@
+{
+  "source": "Invented text (make_sample.py). Not any organisation's terms.",
+  "note": "Hand-authored. Conduct, safeguarding, records and cooperation. Carries no sanctions, bribery or conflict provision, so those categories are forbidden here.",
+  "max_false_fires": 0,
+  "forbid": [
+    "R1",
+    "R2",
+    "R3",
+    "R5",
+    "R6",
+    "R7",
+    "R12"
+  ],
+  "expect": [
+    {
+      "category": "R15",
+      "quote": "Supplier Code of Conduct",
+      "modality": "obligation",
+      "why": "Code of conduct compliance."
+    },
+    {
+      "category": "R10",
+      "quote": "prevent sexual exploitation and abuse",
+      "modality": "obligation",
+      "why": "Safeguarding duty."
+    },
+    {
+      "category": "R10",
+      "quote": "forced labour or in the worst forms of child labour",
+      "modality": "prohibition",
+      "why": "Labour standards."
+    },
+    {
+      "category": "R8",
+      "quote": "cooperate with any audit or investigation",
+      "modality": "obligation",
+      "why": "Cooperation with investigations."
+    },
+    {
+      "category": "R14",
+      "quote": "retain all records relating to the Contract for a period of seven (7) years",
+      "why": "Record retention period."
+    },
+    {
+      "category": "R9",
+      "quote": "shall not disclose it to any third party",
+      "why": "Confidentiality."
+    },
+    {
+      "category": "R9",
+      "quote": "personal data",
+      "why": "Data protection."
+    }
+  ]
+}

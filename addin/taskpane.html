@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Compliance Review</title>
+
+<!--
+  Office.js is loaded from Microsoft's CDN because Office requires the hosted
+  copy: a self-hosted one goes stale against the host application and is
+  explicitly unsupported. It carries no document content — it is the bridge to
+  the copy of Word already running on this machine. If it cannot be reached, the
+  pane falls back to standalone mode and everything except the document-side
+  actions still works, which is also how it runs in a browser for PDFs.
+-->
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"
+        onerror="window.__officeUnavailable = true"></script>
+
+<link rel="stylesheet" href="./taskpane.css" />
+<link rel="icon" href="./assets/icon-32.png" />
+</head>
+
+<body>
+<div class="app">
+
+  <header class="masthead">
+    <svg viewBox="0 0 24 24" role="img" aria-label="cgate"><path fill="none" stroke="currentColor" stroke-width="2" d="M4 4h16v16H4z M8 12l3 3 5-6"/></svg>
+    <div>
+      <h1>Pre-Submission Compliance Review</h1>
+      <div class="sub"><span>cgate</span> · SOP-3.11</div>
+    </div>
+  </header>
+
+  <!-- Not dismissible, and not a paragraph. The sentence the whole system exists
+       to keep true is one line; the rest of it is a tap away and unchanged. Every
+       margin comment the tool writes carries the full disclaimer anyway, which is
+       where a reviewer actually reads it. -->
+  <details class="governance">
+    <summary><strong>Evidence for the Compliance Officer.</strong> Not a clearance.</summary>
+    <p>
+      It is evidence gathered for the Compliance Officer, who determines clearance,
+      conditions or hold. Nothing in this pane is a determination of the Compliance
+      Officer or of the Ethics and Compliance Committee.
+    </p>
+  </details>
+
+  <main>
+
+    <!-- ---------------------------------------------------------------- -->
+    <section id="idle" class="intro">
+      <!-- The three-rule ledger that used to sit here is gone. `renderChecklist()`
+           already prints "Never cleared automatically" against items 6, 7 and 9,
+           which is where that rule is true rather than merely stated. -->
+      <h2>Review the open document</h2>
+      <p>Fifteen items. One is read from the tender; the rest are gaps.</p>
+
+      <div id="host-actions">
+        <button id="btn-review-doc" class="btn btn-primary btn-block">
+          Review a tender we received
+        </button>
+        <!-- The other direction: this document is OURS, and wants marking. -->
+        <button id="btn-mark-submission" class="btn btn-secondary btn-block"
+                style="margin-top:8px">
+          Mark up a proposal we are sending
+        </button>
+      </div>
+
+      <div id="standalone-actions" hidden>
+        <div class="filedrop" id="drop">
+          Drop the tender here, or
+          <label style="color:var(--azure-600);cursor:pointer;text-decoration:underline">
+            choose files<input id="file" type="file" multiple accept=".pdf,.docx,.txt,.md" hidden />
+          </label>
+          <div class="hint">Solicitation first, then annexes.</div>
+          <ul class="filelist" id="filelist"></ul>
+        </div>
+        <button id="btn-review-files" class="btn btn-primary btn-block" style="margin-top:10px" disabled>
+          Review
+        </button>
+      </div>
+
+      <div style="margin-top:12px">
+        <label style="font-size:11px;color:var(--muted-foreground);cursor:pointer">
+          Evidence bundle &mdash;
+          <span style="color:var(--azure-600);text-decoration:underline">attach</span>
+          <input id="bundle" type="file" accept=".json" hidden />
+        </label>
+        <div id="bundle-name" class="sub" style="font-family:var(--font-mono);font-size:10px;color:var(--ink-muted)"></div>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <section id="result" hidden>
+
+      <div class="docmeta">
+        <div class="name" id="r-name"></div>
+        <div class="row" id="r-stats"></div>
+        <div class="row hash" id="r-hash" title="SHA-256 of the bytes Word handed over — of what was actually read, not of a file on disk that may since have changed. Click to copy."></div>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab" role="tab" id="tab-margin" aria-selected="true" aria-controls="panel-margin">
+          Provisions <span class="n" id="n-prov"></span>
+        </button>
+        <button class="tab" role="tab" id="tab-checklist" aria-selected="false" aria-controls="panel-checklist">
+          Checklist <span class="n">15</span>
+        </button>
+        <button class="tab" role="tab" id="tab-gaps" aria-selected="false" aria-controls="panel-gaps">
+          Gaps <span class="n" id="n-gaps"></span>
+        </button>
+      </div>
+
+      <div class="panel" id="panel-margin" role="tabpanel" aria-labelledby="tab-margin">
+
+        <div id="doc-tools" class="doc-tools">
+          <div class="doc-tools-row">
+            <label class="tool-label" for="markup-target">Mark up</label>
+            <select id="markup-target" class="tool-select">
+              <option value="copy" selected>A marked-up copy</option>
+              <option value="this">This document</option>
+            </select>
+            <label class="tool-label" for="markup-mode">as</label>
+            <select id="markup-mode" class="tool-select">
+              <option value="frames" selected>Frames</option>
+              <option value="marked-up">Marked up (printable)</option>
+              <option value="comments">Comments only</option>
+            </select>
+          </div>
+          <div class="doc-tools-row btn-row">
+            <button id="btn-annotate" class="btn btn-secondary btn-sm">Mark up the document</button>
+            <button id="btn-unannotate" class="btn btn-secondary btn-sm">Remove markup</button>
+            <button id="btn-sync-replies" class="btn btn-secondary btn-sm" hidden>Sync replies</button>
+          </div>
+          <div class="doc-tools-row">
+            <label class="tool-check">
+              <input type="checkbox" id="chk-show-reviewed" /> Show bands
+            </label>
+          </div>
+        </div>
+
+        <div id="walk-bar" class="walk-bar" hidden>
+          <button id="btn-walk-prev" class="btn btn-secondary btn-sm" title="Previous, worst first">&larr; Prev</button>
+          <span id="walk-pos" class="walk-pos">&mdash;</span>
+          <button id="btn-walk-next" class="btn btn-secondary btn-sm" title="Next, worst first">Next &rarr;</button>
+          <button id="btn-walk-confirm-next" class="btn btn-primary btn-sm">Confirm &amp; next</button>
+        </div>
+
+        <div id="filter-bar" class="filter-bar" hidden>
+          <div class="filter-group" id="filter-band"></div>
+          <div class="filter-group">
+            <select id="filter-category" class="tool-select">
+              <option value="">All categories</option>
+            </select>
+            <select id="filter-item" class="tool-select">
+              <option value="">All checklist items</option>
+            </select>
+            <select id="filter-reviewed" class="tool-select">
+              <option value="">Reviewed &amp; unreviewed</option>
+              <option value="unreviewed">Unreviewed only</option>
+              <option value="reviewed">Reviewed only</option>
+            </select>
+            <button id="btn-filter-clear" class="btn btn-secondary btn-sm">Clear filters</button>
+          </div>
+        </div>
+
+        <div class="prov-layout">
+          <div id="provisions" class="prov-list"></div>
+          <div id="minimap" class="minimap" hidden></div>
+        </div>
+
+        <div id="unanchored-wrap" hidden>
+          <h3 class="unanchored-head">Unanchored</h3>
+          <p class="unanchored-note">Not placed in this file. Listed above, not dropped.</p>
+          <div id="unanchored"></div>
+        </div>
+
+        <div class="btn-row" style="margin-top:14px">
+          <button id="btn-schedule" class="btn btn-secondary btn-sm">Schedule</button>
+        </div>
+      </div>
+
+      <div class="panel" id="panel-checklist" role="tabpanel" aria-labelledby="tab-checklist" hidden>
+        <div id="checklist"></div>
+      </div>
+
+      <div class="panel" id="panel-gaps" role="tabpanel" aria-labelledby="tab-gaps" hidden>
+        <div class="callout">
+          <div class="btn-row">
+            <a id="dl-request" class="btn btn-primary btn-sm" download>Evidence request &middot; .md</a>
+            <a id="dl-md" class="btn btn-secondary btn-sm" download>Review &middot; .md</a>
+            <a id="dl-json" class="btn btn-secondary btn-sm" download>Record &middot; .json</a>
+          </div>
+        </div>
+        <div id="gaps"></div>
+      </div>
+
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--hairline)">
+        <button id="btn-reset" class="btn btn-secondary btn-sm">Review another document</button>
+      </div>
+    </section>
+
+    <!-- ---------------------------------------------------------------- -->
+    <!-- The examiner's pass over our own submission. Dense on purpose: the
+         counts, then what did not run, then the marks. No preamble. -->
+    <section id="marks" hidden>
+      <div class="doc">
+        <div class="name" id="mk-name"></div>
+        <div class="row hash" id="mk-hash" title="Click to copy the full hash"></div>
+      </div>
+
+      <div class="mk-sources">
+        <details>
+          <summary>Sources <span class="mk-src-n" id="mk-src-n"></span></summary>
+          <label class="mk-src">
+            <span>Staff register (JSON)</span>
+            <input type="file" id="mk-register" accept=".json" />
+            <em>Items 13, 14.</em>
+          </label>
+          <label class="mk-src">
+            <span>Third-party material</span>
+            <input type="file" id="mk-material" multiple />
+            <em>What subcontractors and partners sent us.</em>
+          </label>
+          <label class="mk-src">
+            <span>Declared parties</span>
+            <input type="text" id="mk-parties" placeholder="Firm A LLC, Firm B Ltd" />
+            <em>Item 11.</em>
+          </label>
+          <label class="mk-src">
+            <span>Solicitation document id</span>
+            <input type="text" id="mk-solicitation" placeholder="sha256 of a reviewed tender" />
+            <em>Coverage against the tender.</em>
+          </label>
+          <button id="btn-mk-rerun" class="btn btn-secondary btn-sm"
+                  style="margin-top:8px">Re-run with these sources</button>
+        </details>
+      </div>
+
+      <div class="doc-tools">
+        <button id="btn-mk-annotate" class="btn btn-secondary btn-sm">Mark up the document</button>
+        <button id="btn-mk-comments" class="btn btn-secondary btn-sm">Comments only</button>
+        <button id="btn-mk-unannotate" class="btn btn-secondary btn-sm">Remove marks</button>
+      </div>
+      <p class="mk-warn">Remove marks before the submission is sent.</p>
+
+      <div id="mk-list"></div>
+
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--hairline)">
+        <button id="btn-mk-reset" class="btn btn-secondary btn-sm">Back</button>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="status" id="status">Waiting for the host.</div>
+</div>
+
+<!-- Reviewer identity: every ledger entry is owned by a named person. -->
+<datalist id="reviewers"></datalist>
+
+<script src="./anchor.js"></script>
+<script src="./marks.js"></script>
+<script src="./taskpane.js"></script>
+</body>
+</html>

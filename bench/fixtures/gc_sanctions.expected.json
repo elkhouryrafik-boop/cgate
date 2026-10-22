@@ -1,0 +1,47 @@
+{
+  "source": "Invented text (make_sample.py). Not any organisation's terms.",
+  "note": "Hand-authored. Sanctions, financial-crime and payment clauses.",
+  "max_false_fires": 0,
+  "forbid": [
+    "R2",
+    "R10",
+    "R12",
+    "R15"
+  ],
+  "expect": [
+    {
+      "category": "R6",
+      "quote": "consolidated sanctions list maintained under a Security Council resolution",
+      "modality": "obligation",
+      "why": "Sanctions screening representation."
+    },
+    {
+      "category": "R11",
+      "quote": "promptly notify the Purchaser in writing",
+      "modality": "obligation",
+      "why": "Continuing disclosure of listing."
+    },
+    {
+      "category": "R6",
+      "quote": "support terrorism",
+      "why": "Counter-terrorism funding restriction."
+    },
+    {
+      "category": "R6",
+      "quote": "shall not engage in money laundering",
+      "modality": "prohibition",
+      "why": "Money laundering."
+    },
+    {
+      "category": "R5",
+      "quote": "any bribe, kickback, facilitation payment or other improper payment",
+      "modality": "prohibition",
+      "why": "Bribery and facilitation payments."
+    },
+    {
+      "category": "R8",
+      "quote": "access to the relevant books and records",
+      "why": "Audit access."
+    }
+  ]
+}

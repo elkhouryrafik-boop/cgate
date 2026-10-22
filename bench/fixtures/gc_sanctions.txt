@@ -1,0 +1,18 @@
+Invented text for benchmarking — not any organisation's terms.
+Aldermere Development Foundation — Example General Conditions, Part 8: Sanctions and Financial Crime
+
+8.1 Sanctions screening. The Contractor represents and warrants that neither it, nor any of its directors, beneficial owners or Personnel, appears on any consolidated sanctions list maintained under a Security Council resolution, or on any national sanctions list that applies to the Purchaser or to the funding partners of the Purchaser.
+
+8.2 Continuing status. The Contractor shall promptly notify the Purchaser in writing if any person referred to in clause 8.1 is added to such a list during the term of the Contract. The Purchaser may suspend payment until the status of that person has been clarified.
+
+8.3 Counter-terrorism. The Contractor shall use all reasonable efforts to ensure that no funds received under the Contract are used to support terrorism or any person or entity associated with terrorism, and shall not make funds, goods or services available to any person subject to an asset freeze.
+
+8.4 Money laundering. The Contractor shall not engage in money laundering, and shall maintain procedures that are reasonably designed to detect and prevent the movement of illicit funds through the services or through any account used for payments under the Contract.
+
+8.5 Payments. Payments will be made only to an account in the name of the Contractor in the country where the services are performed or in the country of incorporation of the Contractor. The Contractor shall provide the bank details required by the Purchaser and shall notify the Purchaser of any change to them.
+
+8.6 Bribery. The Contractor shall not pay, offer or promise any bribe, kickback, facilitation payment or other improper payment to any person, whether a public official or not, in order to obtain or retain business or any advantage in the performance of the Contract.
+
+8.7 Audit of sanctions controls. The Purchaser, or an auditor appointed by it, may examine the Contractor's screening records and shall be given access to the relevant books and records during normal business hours on reasonable notice.
+
+8.8 Termination. Breach of this Part is a material breach. The Purchaser is entitled to terminate the Contract with immediate effect on written notice and the Contractor shall have no claim for losses arising from that termination.

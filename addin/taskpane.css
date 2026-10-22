@@ -1,0 +1,1116 @@
+/* ============================================================
+   Compliance Review — Word task pane
+   cgate design system "Deep Water, Precise Lines". Anchors, fonts, radii and
+   easings are copied verbatim from site/src/styles/global.css @theme. The
+   palette's saturation is the brand; nothing here "improves" a hex.
+
+   One typographic rule governs the whole pane, and it is load-bearing:
+
+       Source Serif 4  = the document speaking. Verbatim contract text only.
+       Libre Franklin  = the system speaking. Every word of analysis.
+       IBM Plex Mono   = an identifier. Hashes, clause numbers, req ids,
+                         trigger names — things that are codes, never prose.
+
+   A reader must be able to tell, at a glance and without reading, which words
+   are the contract's and which are the machine's. On a surface whose entire
+   purpose is to keep those two apart, letting them share a typeface would be
+   the first mistake.
+   ============================================================ */
+
+/* ---- self-hosted, no network ---- */
+@font-face {
+  font-family: 'Libre Franklin';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('./assets/fonts/libre-franklin-latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url('./assets/fonts/source-serif-4-latin-wght-normal.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'Source Serif 4';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 200 900;
+  src: url('./assets/fonts/source-serif-4-latin-wght-italic.woff2') format('woff2-variations');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url('./assets/fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url('./assets/fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+}
+
+:root {
+  /* Brand anchors — verbatim from @theme */
+  --midnight: #000034;
+  --royal-950: #001646;
+  --royal-900: #021a53;
+  --royal-800: #041f62;
+  --royal-700: #07287a;
+  --royal-600: #0b2f90;
+  --royal-500: #0d35a2;
+  --azure-600: #005dab;
+  --azure-500: #0762ad;
+  --periwinkle: #4b63a9;
+  --sky-ribbon: #b7dbff;
+  --white: #ffffff;
+
+  --periwinkle-100: #e6eaf5;
+  --periwinkle-50: #f3f5fa;
+  --royal-100: #dbe2f2;
+  --ink: #101b3e;
+  --ink-muted: #4a5578;
+  --royal-text-2: #ccd6ee;
+  --royal-text-3: #a9b4d9;
+
+  --destructive: #b3261e;
+  /* There is no success colour in this system, because there is no success
+     state. §0.2 rules out green: green reads as "cleared", and the strongest
+     verdict available is that the evidence asked for is on file. This violet
+     is what a commendation is drawn in — it says *attested*, not *passed* —
+     and it stays legible under protanopia and deuteranopia, where a green
+     tick and a red correction collapse into the same muddy tone. */
+  --attested: #5b3c8e;
+  --warning: #8a5a00;
+
+  --font-display: 'Libre Franklin', 'Franklin Gothic Medium', 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-mono: 'IBM Plex Mono', Consolas, monospace;
+
+  /* Type scale. There were ten sizes here, three of them half-pixels, which
+     Word's WebView2 renders soft at 125% DPI. Six is enough for a 320px pane,
+     and every one of them has a job:
+
+       --t-id    identifiers and uppercase micro-labels. Never prose.
+       --t-meta  page numbers, counts, secondary rows.
+       --t-sub   the analysis lines on a card.
+       --t-body  the clause quote, and body text generally.
+       --t-head  a section heading.
+       --t-num   a count that has to be read across the room.  */
+  --t-id: 10px;
+  --t-meta: 11px;
+  --t-sub: 12px;
+  --t-body: 13px;
+  --t-head: 15px;
+  --t-num: 26px;
+
+  --lh-prose: 1.5;
+  --lh-quote: 1.45;
+  --lh-id: 1.2;
+
+  /* 4px rhythm. Fifteen different margins agreed with nothing; these eight
+     agree with each other, which is the entire trick. */
+  --s1: 2px; --s2: 4px; --s3: 6px; --s4: 8px;
+  --s5: 12px; --s6: 16px; --s7: 24px; --s8: 32px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 150ms;
+  --duration-base: 240ms;
+
+  /* Luminous surface: this is a margin note on paper, read in daylight. */
+  --background: var(--white);
+  --foreground: var(--ink);
+  --muted: var(--periwinkle-50);
+  --muted-foreground: var(--ink-muted);
+  --border: var(--royal-100);
+  --hairline: var(--royal-100);
+
+  --pane-pad: 14px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--foreground);
+  background: var(--background);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: var(--azure-600); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--azure-500);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Frame
+   ============================================================ */
+
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+
+.masthead {
+  background: var(--royal-900);
+  color: var(--white);
+  padding: 12px var(--pane-pad);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 3px solid var(--azure-600);
+}
+.masthead svg { width: 15px; height: 19px; color: var(--sky-ribbon); flex: none; }
+.masthead h1 {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.masthead .sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--royal-text-3);
+  letter-spacing: 0.02em;
+}
+
+/* The line the whole system exists to hold. It is the first thing on the pane
+   and it is not dismissible. */
+.governance {
+  background: var(--royal-950);
+  color: var(--royal-text-2);
+  padding: 8px var(--pane-pad);
+  font-size: 11px;
+  line-height: 1.5;
+  border-bottom: 1px solid rgba(183, 219, 255, 0.18);
+}
+.governance strong { color: var(--white); font-weight: 600; }
+
+/* One line at rest, the full sentence on demand. The marker is a caret rather
+   than the browser's triangle so the bar reads as a statement that happens to
+   open, not as a widget the reader has to operate. */
+.governance > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.governance > summary::-webkit-details-marker { display: none; }
+.governance > summary::after {
+  content: '›';
+  margin-left: auto;
+  color: var(--royal-text-3);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+.governance[open] > summary::after { transform: rotate(90deg); }
+.governance > p { margin-top: 6px; color: var(--royal-text-3); }
+
+/* Secondary explanation. Small, muted, and never more than a line or two —
+   `test_the_pane_copy_stays_within_its_budget` is what keeps that true. */
+.hint {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin-top: 6px;
+  line-height: 1.45;
+}
+
+main { flex: 1; padding: var(--pane-pad); }
+
+/* ============================================================
+   Buttons
+   ============================================================ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: background var(--duration-fast) var(--ease-standard),
+              border-color var(--duration-fast) var(--ease-standard);
+}
+.btn-primary { background: var(--azure-600); color: var(--white); }
+.btn-primary:hover:not(:disabled) { background: var(--royal-700); }
+.btn-secondary { border: 1px solid var(--border); background: var(--white); color: var(--ink); }
+.btn-secondary:hover:not(:disabled) { background: var(--periwinkle-50); border-color: var(--periwinkle); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-block { width: 100%; }
+.btn-row { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.btn-sm { padding: 4px 9px; font-size: 11px; font-weight: 500; }
+
+/* ============================================================
+   Idle state
+   ============================================================ */
+
+.intro h2 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.intro p { font-size: 12px; color: var(--muted-foreground); margin-bottom: 12px; }
+
+.ledger {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin: 16px 0;
+  overflow: hidden;
+}
+.ledger dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted-foreground);
+  background: var(--periwinkle-50);
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.ledger dd {
+  font-size: 12px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.ledger dd:last-child { border-bottom: 0; }
+
+.filedrop {
+  border: 1px dashed var(--periwinkle);
+  border-radius: var(--radius-md);
+  background: var(--periwinkle-50);
+  padding: 16px 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted-foreground);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.filedrop.over { background: var(--royal-100); border-color: var(--azure-600); }
+.filelist { margin-top: 8px; font-family: var(--font-mono); font-size: 11px; }
+.filelist li { list-style: none; padding: 2px 0; color: var(--ink); }
+.filelist li span { color: var(--muted-foreground); }
+
+/* ============================================================
+   Meta strip
+   ============================================================ */
+
+.docmeta {
+  border-left: 3px solid var(--azure-600);
+  padding: 0 0 0 10px;
+  margin-bottom: 16px;
+}
+.docmeta .name { font-size: 13px; font-weight: 600; word-break: break-word; }
+.docmeta .row {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-foreground);
+  margin-top: 2px;
+  overflow-wrap: anywhere;      /* break between words, not inside them */
+}
+.docmeta .hash { word-break: break-all; }   /* 64 hex chars, no break opportunities */
+.docmeta .hash { cursor: pointer; }
+.docmeta .hash:hover { color: var(--azure-600); }
+
+/* ============================================================
+   Tabs
+   ============================================================ */
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 12px;
+  gap: 2px;
+}
+.tab {
+  padding: 6px 9px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--muted-foreground);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+}
+.tab[aria-selected='true'] { color: var(--ink); border-bottom-color: var(--azure-600); }
+.tab .n {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-foreground);
+  margin-left: 2px;
+}
+
+.panel[hidden] { display: none; }
+
+/* ============================================================
+   Exposure marks — state is form first, colour second.
+
+   A reviewer must not be able to skim status by colour alone, and no state may
+   ever read as "cleared". There is no green. There is no tick.
+   ============================================================ */
+
+.mark {
+  width: 9px; height: 9px;
+  flex: none;
+  border: 1.5px solid currentColor;
+  border-radius: 1px;
+  display: inline-block;
+}
+.mark-high { background: currentColor; }                                  /* solid  */
+.mark-unclassified {                                                      /* ringed */
+  background:
+    radial-gradient(circle at 50% 50%, var(--white) 0 1.6px, currentColor 1.6px 100%);
+}
+.mark-open { background: linear-gradient(135deg, currentColor 50%, transparent 50%); } /* half   */
+.mark-routine { background: transparent; }                                /* hollow */
+
+.exp-high { color: var(--destructive); }
+.exp-unclassified { color: var(--royal-600); }
+.exp-open { color: var(--warning); }
+.exp-routine { color: var(--ink-muted); }
+
+/* ============================================================
+   Provision card — the four questions, in the order they are asked
+   ============================================================ */
+
+.prov {
+  color: var(--foreground);          /* the band tints the mark, never the prose */
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  padding: var(--s4) var(--s5);
+  margin-bottom: var(--s3);
+  background: var(--white);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+.prov:hover { background: var(--periwinkle-50); }
+
+/* Collapsed is the resting state. What survives is the band, the reference and
+   two lines of the clause — enough to decide whether this one is worth opening,
+   which is the only judgement the list is asking for. */
+.prov:not(.is-open) .field,
+.prov:not(.is-open) .reasoning,
+.prov:not(.is-open) .prov-acts { display: none; }
+
+.prov:not(.is-open) .quote {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 0;
+}
+
+.prov-head { cursor: pointer; }
+.prov-head::after {
+  content: '›';
+  margin-left: auto;
+  color: var(--muted-foreground);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+.prov.is-open .prov-head::after { transform: rotate(90deg); }
+.prov[data-exposure='high'] { border-left-color: var(--destructive); }
+.prov[data-exposure='unclassified'] { border-left-color: var(--royal-600); }
+.prov[data-exposure='open'] { border-left-color: var(--warning); }
+.prov[data-exposure='routine'] { border-left-color: var(--royal-100); }
+
+.prov-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.prov-mark { display: inline-flex; align-items: center; gap: 5px; }
+.prov-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+.prov-where {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-foreground);
+  margin-left: auto;
+}
+
+/* The contract's own voice. Serif, indented, ruled — quoted, never paraphrased. */
+.quote {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink);
+  border-left: 2px solid var(--periwinkle);
+  padding: 2px 0 2px 10px;
+  margin: 0 0 9px;
+}
+
+.field { margin-bottom: 6px; }
+.field:last-of-type { margin-bottom: 0; }
+.field dt {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-bottom: 2px;
+}
+.field dd { font-size: 12px; line-height: 1.5; }
+.field-against dt { color: var(--destructive); }
+.prov[data-exposure='unclassified'] .field-against dt { color: var(--royal-600); }
+.prov[data-exposure='open'] .field-against dt { color: var(--warning); }
+.prov[data-exposure='routine'] .field-against dt { color: var(--muted-foreground); }
+.field-manageable dt { color: var(--ink-muted); }
+
+/* Reasoning is one click away, never hidden and never in the way. */
+.reasoning { margin-top: 8px; border-top: 1px solid var(--hairline); padding-top: 6px; }
+.reasoning summary {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--azure-600);
+  cursor: pointer;
+  list-style: none;
+}
+.reasoning summary::-webkit-details-marker { display: none; }
+.reasoning summary::before { content: '▸ '; }
+.reasoning[open] summary::before { content: '▾ '; }
+.reasoning-body { padding-top: 6px; font-size: 11px; color: var(--muted-foreground); }
+.reasoning-body .code {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  background: var(--periwinkle-50);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: 0 3px;
+}
+.carve {
+  border-left: 2px solid var(--destructive);
+  padding-left: 8px;
+  margin-top: 6px;
+  font-size: 11px;
+}
+.carve.resolved { border-left-color: var(--periwinkle); }
+
+.prov-acts {
+  display: flex;
+  gap: 5px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--hairline);
+  flex-wrap: wrap;
+}
+.decided {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-foreground);
+  align-self: center;
+}
+
+/* ============================================================
+   Checklist
+   ============================================================ */
+
+.sec-head {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted-foreground);
+  padding: 12px 0 5px;
+  border-bottom: 1px solid var(--hairline);
+  margin-bottom: 6px;
+}
+.item {
+  border-bottom: 1px solid var(--hairline);
+  padding: 8px 0;
+}
+.item summary {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  cursor: pointer;
+  list-style: none;
+}
+.item summary::-webkit-details-marker { display: none; }
+.item .id {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted-foreground);
+  min-width: 16px;
+  text-align: right;
+}
+.item .txt { flex: 1; font-size: 12px; line-height: 1.45; }
+.item .st {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.st-unresolved { color: var(--warning); }
+.st-flag { color: var(--destructive); }
+.st-requires_human { color: var(--royal-600); }
+.st-evidence_present { color: var(--ink-muted); }
+.st-not_applicable { color: var(--ink-muted); }
+.item-body {
+  padding: 6px 0 2px 24px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+.item-body li { margin-left: 16px; margin-bottom: 2px; }
+.never {
+  font-size: 10px;
+  color: var(--royal-600);
+  border-left: 2px solid var(--royal-600);
+  padding-left: 6px;
+  margin-top: 4px;
+}
+
+/* ============================================================
+   Gaps
+   ============================================================ */
+
+.callout {
+  background: var(--periwinkle-50);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+.callout h3 { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.callout p { color: var(--muted-foreground); margin-bottom: 8px; }
+
+/* ============================================================
+   Status line
+   ============================================================ */
+
+.status {
+  position: sticky;
+  bottom: 0;
+  background: var(--royal-950);
+  color: var(--royal-text-2);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 6px var(--pane-pad);
+  border-top: 1px solid rgba(183, 219, 255, 0.18);
+  min-height: 25px;
+  word-break: break-word;
+}
+.status.err { background: var(--destructive); color: var(--white); }
+
+.spinner {
+  display: inline-block;
+  width: 10px; height: 10px;
+  border: 1.5px solid var(--sky-ribbon);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 700ms linear infinite;
+  vertical-align: -1px;
+  margin-right: 4px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty {
+  font-size: 12px;
+  color: var(--muted-foreground);
+  padding: 16px 0;
+  text-align: center;
+}
+
+/* ============================================================
+   Document tools — markup target/mode (§5.1, §3.3), reviewed toggle (§3.4)
+   ============================================================ */
+
+.doc-tools { margin-bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+.doc-tools-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.tool-label { font-size: 11px; color: var(--muted-foreground); }
+.tool-select {
+  font: inherit;
+  font-size: 11px;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  padding: 4px 6px;
+}
+.tool-check {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+.tool-check input { accent-color: var(--azure-600); }
+
+/* ============================================================
+   Walk mode (§6.2) — buttons are the primary interface; keyboard focus
+   lives in the document while reading, so this is deliberately not a
+   keyboard-shortcut surface.
+   ============================================================ */
+
+.walk-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  margin-bottom: 12px;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+.walk-pos {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted-foreground);
+  min-width: 52px;
+  text-align: center;
+}
+
+/* ============================================================
+   Filters (§6.3) — chips that reach into the document, not just the pane
+   ============================================================ */
+
+.filter-bar { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; }
+.filter-group { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--ink-muted);
+}
+.chip .mark { width: 7px; height: 7px; }
+.chip[aria-pressed='true'] { background: var(--periwinkle-50); border-color: var(--periwinkle); color: var(--ink); }
+
+/* ============================================================
+   Provision list + minimap (§3.5) — the whole-document answer to §3.4:
+   colour draining out of the pages the reviewer cannot currently see.
+   ============================================================ */
+
+.prov-layout { display: flex; gap: 7px; align-items: flex-start; }
+.prov-list { flex: 1; min-width: 0; }
+.minimap {
+  flex: none;
+  width: 6px;
+  height: min(70vh, 640px);
+  border-radius: 3px;
+  background: var(--periwinkle-50);
+  position: sticky;
+  top: 8px;
+}
+.minimap-tick {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  border-radius: 1px;
+  background: currentColor;
+  cursor: pointer;
+}
+.minimap-tick.reviewed { background: var(--royal-100); color: var(--royal-100); }
+.minimap-tick.dimmed { opacity: 0.25; }
+.minimap-cursor {
+  position: absolute;
+  left: -3px;
+  width: 12px;
+  height: 2px;
+  background: var(--ink);
+  border-radius: 1px;
+  pointer-events: none;
+}
+
+/* ============================================================
+   Reviewed state (§3.4) — the document (and the pane) go grey as you work.
+   Not a new colour: fading to the one state colour, --royal-100.
+   ============================================================ */
+
+.prov.reviewed { border-left-color: var(--royal-100) !important; background: var(--periwinkle-50); }
+.prov.reviewed .prov-mark { color: var(--royal-100); }
+.prov.reviewed .decided { font-weight: 600; color: var(--ink); }
+
+/* Walk mode's current position (§6.2) — never colour alone: an outline, not
+   a fill, so it never competes with the band colour it sits inside. */
+.prov.walk-current { outline: 2px solid var(--azure-500); outline-offset: 1px; }
+
+/* ============================================================
+   Unanchored (§4.1.5 / §9.5) — absent is not clean, so this is not hidden
+   ============================================================ */
+
+.unanchored-head { font-size: 12px; font-weight: 600; margin: 16px 0 4px; }
+.unanchored-note { font-size: 11px; color: var(--muted-foreground); margin-bottom: 8px; }
+.prov.unanchored { border-left-color: var(--periwinkle); border-left-style: dashed; }
+.anchor-note {
+  margin-top: 6px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+  border-left: 2px solid var(--periwinkle);
+  padding-left: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Wider than a task pane — standalone in a browser for PDFs. */
+@media (min-width: 700px) {
+  :root { --pane-pad: 28px; }
+  main { max-width: 820px; margin: 0 auto; width: 100%; }
+  body { font-size: 15px; }
+  .governance { font-size: 12px; }
+}
+
+/* ============================================================================
+   The examiner's marks.
+
+   Density is the brief. A reviewer opening this pane has minutes, so the order
+   is: how many faults, what was not examined, then the marks themselves. No
+   introduction, no restatement of what the tool is.
+
+   Colour carries the kind, and the glyph carries it again — a compliance
+   surface must not let a reader skim status by colour alone, and these three
+   states are exactly the ones a colour-blind reader would otherwise lose.
+   ========================================================================= */
+
+.mk-counts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--hairline);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.mk-count { background: var(--background); padding: 8px 6px; text-align: center; }
+.mk-count-n {
+  font-family: var(--font-mono);
+  font-size: 26px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.mk-count-l {
+  font-size: 10px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-top: 2px;
+}
+.mk-count.mk-correction   .mk-count-n { color: var(--destructive); }
+.mk-count.mk-query        .mk-count-n { color: var(--warning); }
+.mk-count.mk-commendation .mk-count-n { color: var(--attested); }
+
+/* The honesty row. Never collapsed, never smaller than the counts above. */
+.mk-checks {
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 11px;
+  line-height: 1.45;
+  margin-bottom: 12px;
+}
+.mk-checks-ok {
+  border: 1px solid var(--hairline);
+  color: var(--muted-foreground);
+}
+.mk-checks-warn {
+  border: 1px solid var(--warning);
+  background: #fff8e8;
+  color: var(--ink);
+}
+.mk-checks-head { font-weight: 600; }
+.mk-skiplist { margin: 6px 0 0; padding-left: 16px; }
+.mk-skiplist li { margin-bottom: 4px; }
+.mk-conseq { display: block; color: var(--muted-foreground); font-size: 11px; }
+
+.mk-coverage {
+  font-size: 11px;
+  color: var(--ink);
+  border-left: 2px solid var(--border);
+  padding: 2px 0 2px 8px;
+  margin-bottom: 12px;
+}
+.mk-caveat { color: var(--muted-foreground); }
+
+.mk-group { margin-bottom: 16px; }
+.mk-group-head {
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  border-bottom: 1px solid var(--hairline);
+  padding-bottom: 4px;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+}
+.mk-group-n { font-family: var(--font-mono); }
+
+.mk-note {
+  font-size: 11px;
+  color: var(--muted-foreground);
+  margin: 4px 0 6px;
+}
+
+/* One mark, one line, until it is asked to say more. */
+.mk-row { border-left: 2px solid transparent; margin-bottom: 2px; }
+.mk-row.mk-correction   { border-left-color: var(--destructive); }
+.mk-row.mk-query        { border-left-color: var(--warning); }
+.mk-row.mk-commendation { border-left-color: var(--attested); }
+.mk-row.mk-missing      { border-left-color: var(--border); }
+
+.mk-head,
+.mk-head-static {
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  gap: 7px;
+  align-items: baseline;
+  width: 100%;
+  padding: 6px 8px;
+  background: none;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.mk-head-static { cursor: default; }
+.mk-head:hover { background: var(--muted); }
+.mk-row.is-open > .mk-head { background: var(--muted); font-weight: 600; }
+
+.mk-glyph { font-family: var(--font-mono); font-size: 12px; }
+.mk-row.mk-correction   .mk-glyph { color: var(--destructive); }
+.mk-row.mk-query        .mk-glyph { color: var(--warning); }
+.mk-row.mk-commendation .mk-glyph { color: var(--attested); }
+
+.mk-heading { min-width: 0; overflow-wrap: anywhere; }
+.mk-where {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.mk-body { padding: 2px 8px 10px 31px; font-size: 11px; line-height: 1.5; }
+.mk-detail { margin-bottom: 6px; }
+.mk-quote {
+  font-family: var(--font-serif);
+  font-size: 11px;
+  border-left: 2px solid var(--border);
+  margin: 6px 0;
+  padding: 2px 0 2px 8px;
+  color: var(--ink);
+}
+.mk-evidence { color: var(--muted-foreground); }
+.mk-items {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted-foreground);
+  margin-top: 4px;
+}
+.mk-why {
+  padding: 0 8px 7px 31px;
+  font-size: 11px;
+  color: var(--muted-foreground);
+}
+
+.mk-sources { margin-bottom: 12px; font-size: 11px; }
+.mk-sources summary { cursor: pointer; color: var(--muted-foreground); }
+.mk-src { display: block; margin: 8px 0; }
+.mk-src > span { display: block; font-weight: 600; font-size: 11px; }
+.mk-src > em {
+  display: block;
+  font-style: normal;
+  font-size: 10px;
+  color: var(--muted-foreground);
+  margin-top: 2px;
+}
+.mk-src input[type="text"] {
+  width: 100%;
+  font: inherit;
+  font-size: 11px;
+  padding: 4px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.mk-src-n { font-family: var(--font-mono); }
+
+.mk-warn {
+  font-size: 11px;
+  color: var(--warning);
+  margin: 6px 0 12px;
+}
+
+/* ============================================================
+   Inline asks
+   Seven browser modals used to live here. They stole focus, they could not
+   show the clause they were asking about, their buttons said OK and Cancel
+   whatever the question was, and some Office hosts suppress them outright --
+   which would have turned a refusal into a silent success. These render where
+   the answer belongs: inside the card, or above the button that raised them.
+   ============================================================ */
+
+#ask-slot:empty { display: none; }
+
+.ask {
+  border: 1px solid var(--periwinkle);
+  border-left-width: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--muted);
+  padding: var(--s5);
+  margin: var(--s3) 0 var(--s5);
+}
+.ask-danger { border-color: var(--destructive); }
+
+.ask-q {
+  font-size: var(--t-sub);
+  font-weight: 600;
+  line-height: var(--lh-prose);
+  margin-bottom: var(--s2);
+}
+.ask-detail {
+  font-size: var(--t-meta);
+  color: var(--muted-foreground);
+  line-height: var(--lh-prose);
+  margin-bottom: var(--s4);
+}
+
+.ask-field { margin-bottom: var(--s4); }
+.ask-field label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: var(--t-id);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  margin-bottom: var(--s1);
+}
+.ask-input {
+  width: 100%;
+  font: inherit;
+  font-size: var(--t-sub);
+  color: var(--ink);
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: var(--s3) var(--s4);
+  resize: vertical;
+}
+.ask-input:focus { outline: 2px solid var(--azure-500); outline-offset: 1px; }
+
+.ask-choices { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.ask-choice { cursor: pointer; }
+.ask-choice.is-on {
+  background: var(--royal-950);
+  border-color: var(--royal-950);
+  color: var(--white);
+}
+
+.ask-acts { display: flex; gap: var(--s3); flex-wrap: wrap; }
+
+/* An unread reply is a reviewer's own words. It stays until they take it away. */
+.unread-list { list-style: none; margin: var(--s3) 0; }
+.unread-list li { margin-bottom: var(--s4); }
+.unread-list .quote { margin: var(--s1) 0 var(--s1); }
+
+/* ---- Suggested fixes ------------------------------------------------------
+   The only place in this add-in where a language model produces anything. It
+   is drawn as a proposal and never as a finding: its own block, the model
+   named on it, and no band colour, because a band means a check ran against a
+   source and nothing here did.                                             */
+
+.mk-draft { margin-top: var(--s4); }
+
+.mk-drafting {
+  font-size: var(--t-meta);
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+.mk-draft-none {
+  font-size: var(--t-meta);
+  color: var(--muted-foreground);
+  line-height: var(--lh-prose);
+  margin-bottom: var(--s3);
+}
+
+.mk-suggestion {
+  border: 1px dashed var(--periwinkle);
+  border-radius: var(--radius-sm);
+  padding: var(--s4);
+  background: var(--white);
+}
+.mk-sug-head {
+  font-family: var(--font-mono);
+  font-size: var(--t-id);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s3);
+  margin-bottom: var(--s3);
+}
+.mk-sug-model { text-transform: none; letter-spacing: 0; }
+
+/* Libre Franklin, not Source Serif 4. The serif is the document speaking, and
+   a draft is not the document until somebody accepts it. */
+.mk-sug-text {
+  font-family: var(--font-display);
+  font-size: var(--t-sub);
+  line-height: var(--lh-prose);
+  color: var(--ink);
+  border-left: 2px dashed var(--periwinkle);
+  padding-left: var(--s4);
+  margin-bottom: var(--s3);
+}
+.mk-sug-warn {
+  font-size: var(--t-meta);
+  color: var(--warning);
+  margin-bottom: var(--s2);
+}
+.mk-sug-note {
+  font-size: var(--t-id);
+  color: var(--muted-foreground);
+  line-height: var(--lh-prose);
+  margin-bottom: var(--s4);
+}
+.mk-sug-done {
+  font-size: var(--t-meta);
+  color: var(--ink);
+  line-height: var(--lh-prose);
+}

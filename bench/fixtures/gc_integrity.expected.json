@@ -1,0 +1,71 @@
+{
+  "source": "Invented text (make_sample.py). Not any organisation's terms.",
+  "note": "Hand-authored before the extractor was run. Every expected provision is one a compliance reviewer must be shown before a bid goes out; a miss is work the tool pushed back onto a human.",
+  "max_false_fires": 0,
+  "forbid": [
+    "R6",
+    "R9",
+    "R10",
+    "R14",
+    "R15"
+  ],
+  "expect": [
+    {
+      "category": "R3",
+      "quote": "corrupt, fraudulent, coercive, collusive or obstructive conduct",
+      "modality": "prohibition",
+      "why": "Standard four-limb prohibited-conduct formulation."
+    },
+    {
+      "category": "R5",
+      "quote": "any gifts, favours or hospitality",
+      "why": "The operative definition of the prohibited benefit."
+    },
+    {
+      "category": "R12",
+      "quote": "no official of the Purchaser has received",
+      "modality": "obligation",
+      "why": "Benefits to the purchaser's officials."
+    },
+    {
+      "category": "R2",
+      "quote": "any actual or potential conflict of interest",
+      "modality": "obligation",
+      "why": "Disclosure of conflict, including perceived conflict."
+    },
+    {
+      "category": "R1",
+      "quote": "has been debarred",
+      "modality": "obligation",
+      "why": "Eligibility representation."
+    },
+    {
+      "category": "R11",
+      "quote": "immediately notify the Purchaser if it or any of its Affiliates",
+      "modality": "obligation",
+      "why": "Continuing disclosure triggered by a change of status."
+    },
+    {
+      "category": "R3",
+      "quote": "without consultation, communication or arrangement with any other bidder",
+      "why": "Independent bidding certification."
+    },
+    {
+      "category": "R7",
+      "quote": "shall not make any false statement or material omission",
+      "modality": "prohibition",
+      "why": "Misrepresentation."
+    },
+    {
+      "category": "R4",
+      "quote": "shall not subcontract any part of the services without the prior written approval",
+      "modality": "prohibition",
+      "why": "Subcontracting consent."
+    },
+    {
+      "category": "R13",
+      "quote": "may disqualify it from current and future procurements",
+      "why": "Consequence of breach."
+    }
+  ]
+}

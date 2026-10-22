@@ -1,0 +1,89 @@
+{
+  "_comment": [
+    "Externally-gathered evidence for one submission, keyed by checklist item id.",
+    "Eleven of the fifteen items are decided against sources this tool does not carry:",
+    "commercial registries, the supplier-registry and development-bank exclusion lists, the staff",
+    "register, HR records, and signed counterparty declarations. Whoever gathers",
+    "them writes them here. An item absent from this file is reported as",
+    "'not resolved' with the reason stated — never as clean.",
+    "",
+    "'triggers' on any item are the structural escalations the gatherer observed.",
+    "They must be drawn from that item's escalate_on list in config/checklist.example.yaml;",
+    "anything else is ignored. No trigger is ever a confidence score."
+  ],
+
+  "1": {
+    "commercial_registry_record": "Example Agency, intergovernmental entity (invented)",
+    "client_official_domain": "agency.example",
+    "retrieval_timestamp": "2026-08-20T09:14:00Z"
+  },
+
+  "2": {
+    "solicitation_source_url": "https://procurement.example.invalid/notice/000000",
+    "retrieval_timestamp": "2026-08-20T09:16:00Z",
+    "source_snapshot_hash": "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  },
+
+  "3": {
+    "screening_result_set": [
+      {"source": "Example registry exclusion list", "result": "match", "entity": "Example Engineering Ltd",
+       "detail": "example exclusion entry, active"},
+      {"source": "Example development-bank exclusion list", "result": "no match", "entity": "Example Engineering Ltd"}
+    ],
+    "retrieval_timestamp": "2026-08-20T09:20:00Z",
+    "triggers": ["any_match"],
+    "_note": "A match is the correct result while an exclusion is active, not a bug. See config/checklist.example.yaml item 3. The CO determines eligibility to participate; the system reports status."
+  },
+
+  "5": {
+    "jurisdiction": "FR",
+    "risk_rating": "standard",
+    "_note": "A code in high_risk_default is high-risk per SOP-3.7 s4.1."
+  },
+
+  "6": {
+    "signed_declaration": [
+      {"counterparty": "Example Sub Ltd", "signed": true, "date": "2026-08-18"}
+    ],
+    "registry_collision_report": [],
+    "attendance_record": [],
+    "conflictscan_report": {"max_similarity": 0.11, "image_matches": 0}
+  },
+
+  "10": {
+    "attestation": {
+      "signed": true,
+      "attestor": "<BD Manager name>",
+      "date": "2026-08-19"
+    }
+  },
+
+  "11": {
+    "attestation": {
+      "signed": true,
+      "attestor": "<BD Manager name>",
+      "date": "2026-08-19",
+      "declared_intermediaries": []
+    }
+  },
+
+  "13": {
+    "verified_records": [
+      {"person": "<name>", "cv_version": "2026-06", "source": "HR file", "current": true}
+    ]
+  },
+
+  "14": {
+    "staff_register_check": [
+      {"person": "<name>", "status": "active", "type": "staff"}
+    ]
+  },
+
+  "15": {
+    "attestation": {
+      "signed": false,
+      "attestor": "<BD Manager name>",
+      "_note": "Signed last, after items 13 and 14 are resolved and the conflictscan report is read. Left unsigned here so the example shows the 'flagged' state."
+    }
+  }
+}

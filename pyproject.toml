@@ -1,0 +1,52 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cgate"
+version = "0.1.0"
+description = "Deterministic tender-compliance engine: compile a solicitation, lint it, ground every finding in the source text."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "elkhouryrafik-boop" }]
+dependencies = [
+    "pymupdf>=1.24",
+    "python-docx>=1.1",
+    "PyYAML>=6.0",
+    "numpy>=1.26",
+    "Pillow>=10.0",
+]
+
+[project.optional-dependencies]
+serve = [
+    "fastapi>=0.110",
+    "uvicorn>=0.27",
+    "python-multipart>=0.0.9",
+    "cryptography>=42",
+]
+dev = [
+    "pytest>=8.0",
+    "httpx>=0.27",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+cgate = "cgate.cli:main"
+
+[tool.setuptools]
+packages = ["cgate"]
+
+[tool.setuptools.package-data]
+cgate = ["schema.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["out", ".venv"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

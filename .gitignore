@@ -1,0 +1,17 @@
+out/
+.public-eval/
+*.db
+*.sqlite*
+.venv/
+addin/certs/
+corpus/files/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+.env
+*.log
+node_modules/

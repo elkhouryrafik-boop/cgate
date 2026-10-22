@@ -1,0 +1,44 @@
+# Reference corpus: the instruments a solicitation tends to incorporate by
+# reference. Every URL below is a placeholder on example.invalid, so
+# `cgate corpus fetch` will report them unreachable until you replace them
+# with real publisher URLs. Fetched files are git-ignored (corpus/files/).
+#
+# Copy to corpus/sources.yaml and edit.
+
+sources:
+  - id: example-gtc-services
+    title: General Terms and Conditions of Contract (Services)
+    issuer: Exemplar
+    category: general_conditions
+    url: https://example.invalid/example-agency/gtc-services.pdf
+    licence: public_access
+    why: Incorporated by reference in most service solicitations from this agency.
+
+  - id: example-supplier-code
+    title: Example Supplier Code of Conduct
+    issuer: Example Secretariat
+    category: integrity
+    url: https://example.invalid/example-secretariat/supplier-code.pdf
+    licence: public_access
+    why: Integrity and conduct commitments bidders are asked to accept.
+
+  - id: sampleton-sanctions-policy
+    title: Sampleton Sanctions Procedures
+    issuer: Sampleton
+    category: sanctions
+    url: https://example.invalid/example-bank/sanctions-procedures.pdf
+    licence: public_access
+    why: Defines the exclusion lists a screening step should consult.
+
+# Instruments that bind a firm but cannot be fetched. Listed so the corpus
+# never reads as complete.
+unavailable:
+  - id: iso-37001-anti-bribery-management
+    title: ISO 37001 anti-bribery management systems
+    licence: licensed_purchase_required
+    blocks: Checking a certification claim against the clause numbering of the current edition.
+
+  - id: example-professional-standard
+    title: Example professional standard (purchase required)
+    licence: licensed_purchase_required
+    blocks: Checking citations of the standard against its clauses.

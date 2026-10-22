@@ -1,0 +1,188 @@
+# Example pre-submission checklist — machine-readable specification.
+# All names, references and values here are invented. Copy and adapt.
+#
+# This file encodes WHAT is checked and WHO does the work.
+# It does not encode WHO DECIDES. Every item's decision authority is the
+# Compliance Officer. The system produces evidence; the CO signs.
+#
+# handling:
+#   automated  - system gathers evidence and evaluates against a defined rule
+#   assisted   - system surfaces evidence and flags candidates; CO determines
+#   attested   - a named human declares; system only enforces that the
+#                declaration exists, is signed, and is retained
+#
+# escalate_on: structural triggers only. No trigger reads a model confidence
+#              score.
+
+version: "1.0"
+source_document: SOP-3.11          # example checklist reference
+bound_procedure: SOP-3.10         # example review procedure reference
+last_reviewed: null          # set by CO on annual review
+
+sections:
+
+  - id: A
+    title: Client and Procurement
+    items:
+      - id: 1
+        text: Client identity and legal status confirmed
+        handling: automated
+        evidence:
+          - commercial_registry_record
+          - client_official_domain
+        escalate_on: [source_unreachable, no_record_found, name_mismatch]
+
+      - id: 2
+        text: Procurement issued through an official channel
+        handling: automated
+        evidence:
+          - solicitation_source_url
+          - retrieval_timestamp
+          - source_snapshot_hash
+        escalate_on: [source_unreachable, unofficial_channel, no_snapshot]
+
+      - id: 3
+        text: The bidding firm is not debarred or restricted by this client or associated funder
+        handling: automated
+        rule: screen_entity_against_all_sources
+        subject: firm
+        evidence: [screening_result_set, retrieval_timestamp]
+        escalate_on: [source_unreachable, any_match, partial_name_match]
+        note: >
+          If the firm is currently listed by the client, this item is expected
+          to return a positive match. That is the correct result, not a bug.
+          The CO determines eligibility to participate; the system reports status.
+
+      - id: 4
+        text: No conflict of interest with the procuring entity or its evaluation team
+        handling: assisted
+        evidence: [relationship_graph_extract, prior_engagement_history]
+        escalate_on: [any_relationship_found, incomplete_personnel_data]
+
+      - id: 5
+        text: Jurisdiction risk assessed
+        handling: automated
+        rule: jurisdiction_risk_table
+        high_risk_default: [XX]      # example ISO country code — per SOP-3.7 §4.1
+        escalate_on: [high_risk_jurisdiction, jurisdiction_not_in_table]
+
+  - id: B
+    title: Subcontractors and Consortium Partners
+    note: >
+      Section B is the control that covers the highest-consequence risk of
+      subcontractors and partners who may bid independently. Items 6-9 carry
+      the highest consequence in this checklist and are never auto-cleared.
+    items:
+      - id: 6
+        text: No proposed subcontractor is submitting an independent bid on the same procurement
+        handling: assisted
+        mechanisms:
+          - counterparty_declaration       # signed, per submission, blocking
+          - cross_pursuit_registry_check   # same entity across live pursuits
+          - prebid_attendance_crosscheck   # site visits, clarification rounds
+          - shared_content_detection       # text and image overlap
+        evidence:
+          - signed_declaration
+          - registry_collision_report
+          - attendance_record
+          - conflictscan_report
+        escalate_on:
+          - declaration_missing
+          - declaration_unsigned
+          - registry_collision
+          - attendance_overlap
+          - content_similarity_above_threshold
+          - image_match_found
+        never_auto_clear: true
+        note: >
+          The system cannot reliably know the full bidder list for a live
+          procurement. It therefore does not attempt to prove a negative.
+          It enforces the declaration, detects what is detectable from the
+          firm's own records and materials, and routes the determination to
+          the CO with the evidence attached.
+
+      - id: 7
+        text: No proposed subcontractor is acting as subcontractor to a competing bidder
+        handling: assisted
+        mechanisms: [counterparty_declaration, cross_pursuit_registry_check]
+        escalate_on: [declaration_missing, registry_collision]
+        never_auto_clear: true
+
+      - id: 8
+        text: All subcontractors confirmed as eligible and not debarred
+        handling: automated
+        rule: screen_entity_against_all_sources
+        subject: each_named_third_party
+        escalate_on: [source_unreachable, any_match, partial_name_match]
+
+      - id: 9
+        text: All consortium partners confirmed as eligible and not submitting independently
+        handling: assisted
+        mechanisms: [counterparty_declaration, cross_pursuit_registry_check]
+        escalate_on: [declaration_missing, registry_collision]
+        never_auto_clear: true
+
+  - id: C
+    title: Anti-Bribery and Ethical Conduct
+    items:
+      - id: 10
+        text: No payment, gift, or hospitality offered or requested in connection with this submission
+        handling: attested
+        attestor: bd_manager
+        escalate_on: [attestation_missing, attestation_unsigned]
+
+      - id: 11
+        text: Any agent or intermediary involved has been declared to the CO
+        handling: attested
+        attestor: bd_manager
+        escalate_on: [attestation_missing, attestation_unsigned, undeclared_party_in_submission]
+
+      - id: 12
+        text: Procurement integrity rules of the client have been reviewed
+        handling: automated
+        rule: extract_integrity_requirements
+        note: >
+          Parses the solicitation and any incorporated general conditions,
+          extracts integrity, eligibility and conflict-of-interest provisions,
+          and presents them for CO review. Where general conditions are
+          incorporated by reference rather than attached, the system records
+          that fact and escalates rather than assuming their content.
+        escalate_on:
+          - conditions_incorporated_by_reference_not_retrieved
+          - parser_disagreement
+          - extraction_unresolved
+
+  - id: D
+    title: Submission Integrity
+    items:
+      - id: 13
+        text: All CVs, credentials, and project references verified against source documents and current
+        handling: automated
+        rule: verify_against_hr_source_records
+        escalate_on: [no_source_record, value_mismatch, record_stale, source_unavailable]
+
+      - id: 14
+        text: All team members named are current staff or approved associates
+        handling: automated
+        rule: verify_against_staff_register
+        escalate_on: [person_not_in_register, status_inactive, source_unavailable]
+
+      - id: 15
+        text: No material misrepresentation or omission in the submission
+        handling: attested
+        attestor: bd_manager
+        informed_by: [item_13_result, item_14_result, conflictscan_report]
+        escalate_on: [attestation_missing, attestation_unsigned]
+        note: Judgment item. The system informs it and never substitutes for it.
+
+# ---------------------------------------------------------------------------
+# Actions the system is structurally prohibited from performing.
+# Enforced in code, not by convention. See docs/ARCHITECTURE.md.
+# ---------------------------------------------------------------------------
+prohibited_actions:
+  - issue_compliance_clearance
+  - issue_conditional_clearance
+  - lift_compliance_hold
+  - close_register_entry
+  - mark_item_satisfied_without_human_confirmation
+  - represent_system_output_as_a_CO_or_ECC_determination

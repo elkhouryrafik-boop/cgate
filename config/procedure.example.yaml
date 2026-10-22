@@ -1,0 +1,30 @@
+# Example procedure configuration for cgate. All values are invented.
+# cgate runs with these same numbers as built-in defaults; copy this file and
+# point CGATE_CONFIG at it to change them. Nothing here is a real procedure.
+
+firm:
+  name: Example Engineering Ltd      # default for --firm
+  aliases: []
+
+# Document references used in report headers and margin comments.
+references:
+  procedure: SOP-3.10               # the review procedure the gate implements
+  checklist: SOP-3.11               # the pre-submission checklist
+  jurisdiction_table: SOP-3.7       # jurisdiction risk table
+  governance_note: "the cgate review-process notes"
+
+# Statutory clocks, in business days (Monday to Friday).
+clocks:
+  standard_notification_days: 10
+  fasttrack_notification_days: 5
+  standard_review_days: 7
+  fasttrack_review_days: 3
+  fasttrack_approval_days: 1
+
+# Register retention, in years.
+retention_years: 7
+
+# Optional extra surface forms for the procuring organisation, used by the
+# lexicon in addition to the role words ("the Purchaser", "the Employer",
+# "the Organization", "the Fund", "the Client").
+agency_aliases: []
